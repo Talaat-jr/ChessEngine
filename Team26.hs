@@ -112,6 +112,7 @@ isLegal (R currLoc) board newLoc = rookLegalHelper  (R currLoc) board newLoc
 isLegal (B currLoc) board newLoc = bishopLegalHelper (B currLoc) board newLoc
 isLegal (Q currLoc) board newLoc = queenLegalHelper (Q currLoc) board newLoc
 isLegal (K currLoc) board newLoc = kingLegalHelper (K currLoc) board newLoc
+isLegal (N currLoc) board newLoc = knightLegalHelper (N currLoc) board newLoc
 
 
 
@@ -186,6 +187,24 @@ kingLegalHelper (K (c1,r1)) (player , white ,black) (c2,r2) | r1==r2 && ((getInd
                                                             | ((getIndex c1) +1) ==(getIndex c2) && r1+1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) 
                                                             | otherwise = False
 
+knightLegalHelper :: Piece -> Board -> Location  -> Bool
+knightLegalHelper (N (c1,r1)) (player , white ,black) (c2,r2)   | (getIndex c1)+1 == (getIndex c2) && r1+2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                                | (getIndex c1)+1 == (getIndex c2) && r1+2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
+                                                                | (getIndex c1)-1 == (getIndex c2) && r1+2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                                | (getIndex c1)-1 == (getIndex c2) && r1+2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
+                                                                | (getIndex c1)+1 == (getIndex c2) && r1-2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                                | (getIndex c1)+1 == (getIndex c2) && r1-2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
+                                                                | (getIndex c1)-1 == (getIndex c2) && r1-2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                                | (getIndex c1)-1 == (getIndex c2) && r1-2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
+                                                                | (getIndex c1)+2 == (getIndex c2) && r1+1==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                                | (getIndex c1)+2 == (getIndex c2) && r1+1==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
+                                                                | (getIndex c1)-2 == (getIndex c2) && r1+1==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                                | (getIndex c1)-2 == (getIndex c2) && r1+1==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
+                                                                | (getIndex c1)+2 == (getIndex c2) && r1-1==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                                | (getIndex c1)+2 == (getIndex c2) && r1-1==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
+                                                                | (getIndex c1)-2 == (getIndex c2) && r1-1==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                                | (getIndex c1)-2 == (getIndex c2) && r1-1==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
+                                                                | otherwise = False
 ----------
 -- retuen list of illegal valid move for given piece
 suggestMove :: Piece -> Board -> [Location]
