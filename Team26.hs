@@ -111,7 +111,7 @@ isLegal :: Piece -> Board -> Location -> Bool
 isLegal (R currLoc) board newLoc = rookLegalHelper  (R currLoc) board newLoc
 isLegal (B currLoc) board newLoc = bishopLegalHelper (B currLoc) board newLoc
 isLegal (Q currLoc) board newLoc = queenLegalHelper (Q currLoc) board newLoc
-
+isLegal (K currLoc) board newLoc = kingLegalHelper (K currLoc) board newLoc
 
 
 
@@ -167,7 +167,24 @@ queenLegalHelper  (Q (c1,r1)) (player , white ,black) (c2,r2)   | r1==r2 && c1 >
                                                                 | (checkWhere (Q (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
                                                                 | (checkWhere (Q (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
 
-
+kingLegalHelper :: Piece -> Board -> Location  -> Bool
+kingLegalHelper (K (c1,r1)) (player , white ,black) (c2,r2) | r1==r2 && ((getIndex c1) -1) ==(getIndex c2) && (checkWhere (K (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                            | r1==r2 && ((getIndex c1) -1) ==(getIndex c2) && (checkWhere (K (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) 
+                                                            | r1==r2 && ((getIndex c1) +1) ==(getIndex c2) && (checkWhere (K (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                            | r1==r2 && ((getIndex c1) +1) ==(getIndex c2) && (checkWhere (K (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
+                                                            | c1==c2 && r1+1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                            | c1==c2 && r1+1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) 
+                                                            | c1==c2 && r1-1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                            | c1==c2 && r1-1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
+                                                            | ((getIndex c1) -1) ==(getIndex c2) && r1-1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                            | ((getIndex c1) -1) ==(getIndex c2) && r1-1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) 
+                                                            | ((getIndex c1) +1) ==(getIndex c2) && r1-1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                            | ((getIndex c1) +1) ==(getIndex c2) && r1-1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) 
+                                                            | ((getIndex c1) -1) ==(getIndex c2) && r1+1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                            | ((getIndex c1) -1) ==(getIndex c2) && r1+1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) 
+                                                            | ((getIndex c1) +1) ==(getIndex c2) && r1+1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
+                                                            | ((getIndex c1) +1) ==(getIndex c2) && r1+1 == r2 && (checkWhere (K (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) 
+                                                            | otherwise = False
 
 ----------
 -- retuen list of illegal valid move for given piece
