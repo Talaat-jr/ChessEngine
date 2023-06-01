@@ -47,6 +47,10 @@ isEmptyHelper location (h1:t1) (h2:t2) | location == (getLocation h1) = False
                                        | location == (getLocation h2) = False
                                        | otherwise = isEmptyHelper location t1 t2
 
+checkWhere :: Piece -> Board -> Player
+checkWhere p (player , white , black)   | elem p white = White
+                                        | elem p Black = Black
+
 getIndex :: Char -> Int
 getIndex 'a'=0
 getIndex 'b'=1
@@ -68,7 +72,11 @@ setIndex 6='g'
 setIndex 7='h'
 
 checkDiagonal :: Location -> Location -> Board -> Bool
-checkDiagonal loc1 loc2 board = (checkDiagonalRightUp 1 loc1 loc2 board) || (checkDiagonalRightDown 1 loc1 loc2 board) || (checkDiagonalLeftUp 1 loc1 loc2 board) || (checkDiagonalLeftDown 1 loc1 loc2 board)
+checkDiagonal (c1,r1) (c2,r2) board   | r1 > r2 && (c1) > ( c2) = checkDiagonalLeftDown 1 (c1,r1) (c2,r2) board
+                                      | r1 > r2 && (c1) < ( c2) = checkDiagonalRightDown 1 (c1,r1) (c2,r2) board
+                                      | r1 < r2 && (c1) < ( c2) = checkDiagonalRightUp 1 (c1,r1) (c2,r2) board
+                                      | r1 < r2 && (c1) > ( c2) = checkDiagonalLeftUp 1 (c1,r1) (c2,r2) board
+                                      | otherwise = False
 
 checkDiagonalRightUp :: Int -> Location -> Location -> Board -> Bool
 checkDiagonalRightUp i (c1 , r1) (c2,r2) board  | (isEmpty ((setIndex ((getIndex c1) + i)),(r1+i)) board) && (setIndex ((getIndex c1) + i)) ==c2 && (r1+i) == r2 = True
@@ -102,22 +110,22 @@ isLegal :: Piece -> Board -> Location -> Bool
 
 isLegal (R currLoc) board newLoc = rookLegalHelper  (R currLoc) board newLoc
 isLegal (B currLoc) board newLoc = bishopLegalHelper (B currLoc) board newLoc
-isLegal (Q currLoc) board newLoc = rookLegalHelper (R currLoc) board newLoc || bishopLegalHelper (B currLoc) board newLoc
+isLegal (Q currLoc) board newLoc = queenLegalHelper (Q currLoc) board newLoc
 
 
 
 
 rookLegalHelper :: Piece -> Board -> Location -> Bool
 rookLegalHelper (R (c1,r1)) (player , white ,black) (c2,r2)     | c1/= c2 && r1/=r2 = False
-                                                                | r1==r2 && c1 > c2 && player==Black = checkValid black (c2,r2) && rookLocationColumn_Left (R (c1,r1)) (player , white ,black) (c2,r2)
-                                                                | r1==r2 && c1 > c2 && player==White = checkValid white (c2,r2) && rookLocationColumn_Left (R (c1,r1)) (player , white ,black) (c2,r2)
-                                                                | r1==r2 && c1 < c2 && player==Black = checkValid black (c2,r2) && rookLocationColumn_Right (R (c1,r1)) (player , white ,black) (c2,r2)
-                                                                | r1==r2 && c1 < c2 && player==White = checkValid white (c2,r2) && rookLocationColumn_Right (R (c1,r1)) (player , white ,black) (c2,r2)
-                                                                | c1==c2 && r1 > r2 && player==Black = checkValid black (c2,r2) && rookLocationRow_Down (R (c1,r1)) (player , white ,black) (c2,r2)
-                                                                | c1==c2 && r1 > r2 && player==White = checkValid white (c2,r2) && rookLocationRow_Down (R (c1,r1)) (player , white ,black) (c2,r2)
-                                                                | c1==c2 && r1 < r2 && player==Black = checkValid black (c2,r2) && rookLocationRow_Up (R (c1,r1)) (player , white ,black) (c2,r2)
-                                                                | c1==c2 && r1 < r2 && player==White = checkValid white (c2,r2) && rookLocationRow_Up (R (c1,r1)) (player , white ,black) (c2,r2)
-                                                                
+                                                                | r1==r2 && c1 > c2 && (checkWhere (R (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationColumn_Left (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | r1==r2 && c1 > c2 && (checkWhere (R (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationColumn_Left (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | r1==r2 && c1 < c2 && (checkWhere (R (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationColumn_Right (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | r1==r2 && c1 < c2 && (checkWhere (R (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationColumn_Right (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | c1==c2 && r1 > r2 && (checkWhere (R (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationRow_Down (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | c1==c2 && r1 > r2 && (checkWhere (R (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationRow_Down (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | c1==c2 && r1 < r2 && (checkWhere (R (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationRow_Up (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | c1==c2 && r1 < r2 && (checkWhere (R (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationRow_Up (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                                                                         
 rookLocationRow_Up :: Piece -> Board -> Location -> Bool
 rookLocationRow_Up (R (c1,r1)) board (c2,r2)| r2==r1 = True
                                             | isEmpty (c1 , (r1 + 1)) board = rookLocationRow_Up (R (c1,r1+1)) board (c2,r2) 
@@ -143,9 +151,21 @@ rookLocationColumn_Right  (R (c1,r1)) board (c2,r2) | c1 == c2 = True
                                                     | otherwise = False
 
 bishopLegalHelper :: Piece -> Board -> Location  -> Bool
-bishopLegalHelper (B (c1,r1)) (player , white ,black) (c2,r2)   | player==White = checkValid white (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
-                                                                | player==Black = checkValid black (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
+bishopLegalHelper (B (c1,r1)) (player , white ,black) (c2,r2)   | (checkWhere (B (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
+                                                                | (checkWhere (B (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
 
+
+queenLegalHelper :: Piece -> Board -> Location  -> Bool
+queenLegalHelper  (Q (c1,r1)) (player , white ,black) (c2,r2)   | r1==r2 && c1 > c2 && (checkWhere (Q (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationColumn_Left (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | r1==r2 && c1 > c2 && (checkWhere (Q (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationColumn_Left (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | r1==r2 && c1 < c2 && (checkWhere (Q (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationColumn_Right (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | r1==r2 && c1 < c2 && (checkWhere (Q (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationColumn_Right (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | c1==c2 && r1 > r2 && (checkWhere (Q (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationRow_Down (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | c1==c2 && r1 > r2 && (checkWhere (Q (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationRow_Down (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | c1==c2 && r1 < r2 && (checkWhere (Q (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationRow_Up (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | c1==c2 && r1 < r2 && (checkWhere (Q (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationRow_Up (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | (checkWhere (Q (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
+                                                                | (checkWhere (Q (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
 
 
 
