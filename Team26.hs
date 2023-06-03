@@ -2,6 +2,17 @@ type Location = (Char,Int)
 data Player = White | Black deriving (Show,Eq)
 data Piece = P Location | N Location | K Location | Q Location | R Location | B Location deriving (Show,Eq)
 type Board = (Player,[Piece],[Piece])
+
+allLocations :: [Location]
+allLocations = [('a',1) , ('a',2) , ('a',3) , ('a',4) , ('a',5) , ('a',6) , ('a',7) , ('a',8),
+                ('b',1) , ('b',2) , ('b',3) , ('b',4) , ('b',5) , ('b',6) , ('b',7) , ('b',8),
+                ('c',1) , ('c',2) , ('c',3) , ('c',4) , ('c',5) , ('c',6) , ('c',7) , ('c',8),
+                ('d',1) , ('d',2) , ('d',3) , ('d',4) , ('d',5) , ('d',6) , ('d',7) , ('d',8),
+                ('e',1) , ('e',2) , ('e',3) , ('e',4) , ('e',5) , ('e',6) , ('e',7) , ('e',8),
+                ('f',1) , ('f',2) , ('f',3) , ('f',4) , ('f',5) , ('f',6) , ('f',7) , ('f',8),
+                ('g',1) , ('g',2) , ('g',3) , ('g',4) , ('g',5) , ('g',6) , ('g',7) , ('g',8),
+                ('h',1) , ('h',2) , ('h',3) , ('h',4) , ('h',5) , ('h',6) , ('h',7) , ('h',8)]
+
 -----------
 -- Setting the intial state of the chess board
 setBoard :: Board 
@@ -15,8 +26,51 @@ setBoard = (White ,[R ('h',1),N ('g',1),B ('f',1),K ('e',1),
             P ('d',7),P ('c',7),P ('b',7),P ('a',7)])
 -----------
 -- trun pieces lists into board format
-visualizeBoard :: Board -> string 
-visualizeBoard (player,)
+visualizeBoard :: Board -> String
+visualizeBoard (player, whitePieces, blackPieces) = "    a    b    c    d    e    f    g    h\n" ++ (concatMap (\rowNumber -> (getRow rowNumber (player, whitePieces, blackPieces)) ++ "\n") [8,7,6,5,4,3,2,1] ) ++ "\n" ++ "Turn : " ++ (playerString player)
+
+playerString :: Player -> String
+playerString White = "White"
+playerString Black = "Black"
+
+typestoString :: Piece -> (String, Location)
+typestoString (P loc) = ("P", loc)
+typestoString (N loc) = ("N", loc)
+typestoString (K loc) = ("K", loc)
+typestoString (Q loc) = ("Q", loc)
+typestoString (R loc) = ("R", loc)
+typestoString (B loc) = ("B", loc)
+
+getPieceStr :: Location -> Board -> String
+getPieceStr location (_,whitePieces,blackPieces)
+  | searchRes (search location whitePieces) == "" && searchRes (search location blackPieces) /= "" = searchRes (search location blackPieces) ++ "B"
+  | searchRes (search location whitePieces) /= "" && searchRes (search location blackPieces) == "" = searchRes (search location whitePieces) ++ "W"
+  | otherwise = "  "
+
+intString :: Int -> String
+intString n | n==1 = "1"
+            | n==2 = "2"
+            | n==3 = "3"
+            | n==4 = "4"
+            | n==5 = "5"
+            | n==6 = "6"
+            | n==7 = "7"
+            | n==8 = "8"
+
+getRow :: Int -> Board -> String
+getRow row board = (intString row) ++ " |" ++ concatMap (\location -> " " ++ (getPieceStr location board) ++ " |") (getLocPair row ['a','b','c','d','e','f','g','h'])
+
+
+getLocPair :: Int -> [Char] -> [Location]
+getLocPair rowNumber columnCharacters = [(col, rowNumber) | col <- columnCharacters]
+
+search :: Location -> [Piece] -> [(String, Location)]
+search location pieces = filter (\(str, loc) -> location == loc) (map typestoString pieces)
+
+searchRes :: [(String, Location)] -> String
+searchRes pieces = case pieces of
+  [] -> ""
+  (str, _) : _ -> str
 
 
 ----------
@@ -220,9 +274,12 @@ pawnLegalHelper (P (c1,r1)) (player , white ,black) (c2,r2) | ((checkWhere (P (c
 ----------
 -- retuen list of illegal valid move for given piece
 suggestMove :: Piece -> Board -> [Location]
+suggestMove piece board = suggestMoveHelper piece board allLocations
 
-
-
+suggestMoveHelper :: Piece -> Board -> [Location] -> [Location]
+suggestMoveHelper _ _ [] = []
+suggestMoveHelper piece board (h:t)  | isLegal piece board h = h:(suggestMoveHelper piece board t)
+                                     | otherwise = (suggestMoveHelper piece board t)
 
 ----------
 -- return the board after moving the given piece 
