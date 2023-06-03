@@ -113,6 +113,7 @@ isLegal (B currLoc) board newLoc = bishopLegalHelper (B currLoc) board newLoc
 isLegal (Q currLoc) board newLoc = queenLegalHelper (Q currLoc) board newLoc
 isLegal (K currLoc) board newLoc = kingLegalHelper (K currLoc) board newLoc
 isLegal (N currLoc) board newLoc = knightLegalHelper (N currLoc) board newLoc
+isLegal (P currLoc) board newLoc = pawnLegalHelper (P currLoc) board newLoc
 
 
 
@@ -205,6 +206,15 @@ knightLegalHelper (N (c1,r1)) (player , white ,black) (c2,r2)   | (getIndex c1)+
                                                                 | (getIndex c1)-2 == (getIndex c2) && r1-1==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
                                                                 | (getIndex c1)-2 == (getIndex c2) && r1-1==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
                                                                 | otherwise = False
+
+pawnLegalHelper :: Piece -> Board -> Location -> Bool
+pawnLegalHelper (P (c1,r1)) (player , white ,black) (c2,r2) | ((checkWhere (P (c1,r1)) (player , white ,black))==White) && r1==8 = False
+                                                            | ((checkWhere (P (c1,r1)) (player , white ,black))==Black) && r1==1 = False
+                                                            | ((checkWhere (P (c1,r1)) (player , white ,black))==Black) && (getIndex c1)==(getIndex c2) && r1 == 7 && (r2== r1-1 || r2==r1-2) = (checkValid black (c2,r2)) && (((r2 ==r1-1) && isEmpty (c2,r2) (player , white ,black)) || (r2==r1-2 && isEmpty (c2,r1-1) (player , white ,black) && isEmpty (c2,r2) (player , white ,black)))
+                                                            | ((checkWhere (P (c1,r1)) (player , white ,black))==White) && (getIndex c1)==(getIndex c2) && r1 == 2 && (r2== r1+1 || r2==r1+2) = (checkValid white (c2,r2)) && (((r2 ==r1+1) && isEmpty (c2,r2) (player , white ,black)) || (r2==r1+2 && isEmpty (c2,r1+1) (player , white ,black) && isEmpty (c2,r2) (player , white ,black)))
+                                                            | ((checkWhere (P (c1,r1)) (player , white ,black))==Black) && (r2 ==  r1-1) && (((getIndex c2)==((getIndex c1)-1))||((getIndex c2)==((getIndex c1)+1))) && not (isEmpty (c2,r2) (player , white ,black)) = checkValid black (c2,r2)
+                                                            | ((checkWhere (P (c1,r1)) (player , white ,black))==White) && (r2 ==  r1+1) && (((getIndex c2)==((getIndex c1)-1))||((getIndex c2)==((getIndex c1)+1))) && not (isEmpty (c2,r2) (player , white ,black)) = checkValid white (c2,r2)
+                                                            | otherwise = False
 ----------
 -- retuen list of illegal valid move for given piece
 suggestMove :: Piece -> Board -> [Location]
