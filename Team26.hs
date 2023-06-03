@@ -79,29 +79,29 @@ checkDiagonal (c1,r1) (c2,r2) board   | r1 > r2 && (c1) > ( c2) = checkDiagonalL
                                       | otherwise = False
 
 checkDiagonalRightUp :: Int -> Location -> Location -> Board -> Bool
-checkDiagonalRightUp i (c1 , r1) (c2,r2) board  | (isEmpty ((setIndex ((getIndex c1) + i)),(r1+i)) board) && (setIndex ((getIndex c1) + i)) ==c2 && (r1+i) == r2 = True
-                                                | (getIndex (c1) +i) > 7 || (r1+i) > 8 = False
+checkDiagonalRightUp i (c1 , r1) (c2,r2) board  | (getIndex (c1) +i) > 7 || (r1+i) > 8 = False
+                                                | (isEmpty ((setIndex ((getIndex c1) + i)),(r1+i)) board) && (setIndex ((getIndex c1) + i)) ==c2 && (r1+i) == r2 = True
                                                 | (isEmpty ((setIndex ((getIndex c1) + i)),(r1+i)) board) && not ((setIndex ((getIndex c1) + i)) ==c2 && (r1+i) == r2)  = checkDiagonalRightUp (i+1) (c1 , r1) (c2,r2) board
                                                 | not (isEmpty ((setIndex ((getIndex c1) + i)),(r1+i)) board) &&  ( ((getIndex c1) + i)) ==(getIndex c2) && (r1+i) == r2 = True
                                                 | otherwise = False
 
 checkDiagonalRightDown :: Int -> Location -> Location -> Board -> Bool
-checkDiagonalRightDown i (c1 , r1) (c2,r2) board  | (isEmpty ((setIndex ((getIndex c1) + i)),(r1-i))  board) && (setIndex ((getIndex c1) + i)) ==c2 && (r1-i) == r2 = True
-                                                  | (getIndex (c1) +i) > 7 || (r1-i) < 1 = False
+checkDiagonalRightDown i (c1 , r1) (c2,r2) board  | (getIndex (c1) +i) > 7 || (r1-i) < 1 = False
+                                                  | (isEmpty ((setIndex ((getIndex c1) + i)),(r1-i))  board) && (setIndex ((getIndex c1) + i)) ==c2 && (r1-i) == r2 = True
                                                   | (isEmpty ((setIndex ((getIndex c1) + i)),(r1-i))  board) && not ((setIndex ((getIndex c1) + i)) ==c2 && (r1-i) == r2)= checkDiagonalRightDown (i+1) (c1 , r1) (c2,r2) board
                                                   | not (isEmpty ((setIndex ((getIndex c1) + i)),(r1+i)) board) && ( ((getIndex c1) + i)) ==(getIndex c2) && (r1-i)==r2 = True
                                                   | otherwise = False
 
 checkDiagonalLeftDown :: Int -> Location -> Location -> Board -> Bool
-checkDiagonalLeftDown i (c1 , r1) (c2,r2) board   | (isEmpty ((setIndex ((getIndex c1) - i)),(r1-i))  board) && (setIndex ((getIndex c1) - i)) ==c2 && (r1-i)== r2 = True
-                                                  | (getIndex (c1) -i) < 0 || (r1-i) < 1 = False
+checkDiagonalLeftDown i (c1 , r1) (c2,r2) board   | (getIndex (c1) -i) < 0 || (r1-i) < 1 = False
+                                                  | (isEmpty ((setIndex ((getIndex c1) - i)),(r1-i))  board) && (setIndex ((getIndex c1) - i)) ==c2 && (r1-i)== r2 = True
                                                   | (isEmpty ((setIndex ((getIndex c1) - i)),(r1-i))  board) && not((setIndex ((getIndex c1) - i)) ==c2 && (r1-i)== r2) = checkDiagonalLeftDown (i+1) (c1 , r1) (c2,r2) board
                                                   | not (isEmpty ((setIndex ((getIndex c1) - i)),(r1-i))  board) && ( ((getIndex c1) - i)) ==(getIndex c2) && (r1-i)== r2 = True
                                                   | otherwise = False
 
 checkDiagonalLeftUp :: Int -> Location -> Location -> Board -> Bool
-checkDiagonalLeftUp i (c1 , r1) (c2,r2) board     | (isEmpty ((setIndex ((getIndex c1) - i)),(r1+i))  board) && (setIndex ((getIndex c1) - i)) ==c2 && (r1+i)== r2 = True
-                                                  | (getIndex (c1) -i) < 0 || (r1+i) > 8 = False
+checkDiagonalLeftUp i (c1 , r1) (c2,r2) board     | (getIndex (c1) -i) < 0 || (r1+i) > 8 = False
+                                                  | (isEmpty ((setIndex ((getIndex c1) - i)),(r1+i))  board) && (setIndex ((getIndex c1) - i)) ==c2 && (r1+i)== r2 = True
                                                   | (isEmpty ((setIndex ((getIndex c1) - i)),(r1+i))  board) && not ((setIndex ((getIndex c1) - i)) ==c2 && (r1+i)== r2) = checkDiagonalLeftUp (i+1) (c1 , r1) (c2,r2) board
                                                   | not (isEmpty ((setIndex ((getIndex c1) - i)),(r1+i))  board) && ( ((getIndex c1) - i)) ==(getIndex c2) && (r1+i)== r2 = True
                                                   | otherwise = False
@@ -212,6 +212,8 @@ pawnLegalHelper (P (c1,r1)) (player , white ,black) (c2,r2) | ((checkWhere (P (c
                                                             | ((checkWhere (P (c1,r1)) (player , white ,black))==Black) && r1==1 = False
                                                             | ((checkWhere (P (c1,r1)) (player , white ,black))==Black) && (getIndex c1)==(getIndex c2) && r1 == 7 && (r2== r1-1 || r2==r1-2) = (checkValid black (c2,r2)) && (((r2 ==r1-1) && isEmpty (c2,r2) (player , white ,black)) || (r2==r1-2 && isEmpty (c2,r1-1) (player , white ,black) && isEmpty (c2,r2) (player , white ,black)))
                                                             | ((checkWhere (P (c1,r1)) (player , white ,black))==White) && (getIndex c1)==(getIndex c2) && r1 == 2 && (r2== r1+1 || r2==r1+2) = (checkValid white (c2,r2)) && (((r2 ==r1+1) && isEmpty (c2,r2) (player , white ,black)) || (r2==r1+2 && isEmpty (c2,r1+1) (player , white ,black) && isEmpty (c2,r2) (player , white ,black)))
+                                                            | ((checkWhere (P (c1,r1)) (player , white ,black))==Black) && (getIndex c1)==(getIndex c2) && r2 == r1-1 = (checkValid black (c2,r2)) && isEmpty (c2,r2) (player , white ,black)
+                                                            | ((checkWhere (P (c1,r1)) (player , white ,black))==White) && (getIndex c1)==(getIndex c2) && r2 == r1+1 = (checkValid white (c2,r2)) && isEmpty (c2,r2) (player , white ,black)
                                                             | ((checkWhere (P (c1,r1)) (player , white ,black))==Black) && (r2 ==  r1-1) && (((getIndex c2)==((getIndex c1)-1))||((getIndex c2)==((getIndex c1)+1))) && not (isEmpty (c2,r2) (player , white ,black)) = checkValid black (c2,r2)
                                                             | ((checkWhere (P (c1,r1)) (player , white ,black))==White) && (r2 ==  r1+1) && (((getIndex c2)==((getIndex c1)-1))||((getIndex c2)==((getIndex c1)+1))) && not (isEmpty (c2,r2) (player , white ,black)) = checkValid white (c2,r2)
                                                             | otherwise = False
