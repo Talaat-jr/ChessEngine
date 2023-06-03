@@ -74,7 +74,7 @@ searchRes pieces = case pieces of
 
 
 ----------
--- check the illegability of moving given piece into the given location
+-- check the legability of moving given piece into the given location
 getLocation :: Piece -> Location
 getLocation (P loc) = loc
 getLocation (N loc) = loc
@@ -103,7 +103,7 @@ isEmptyHelper location (h1:t1) (h2:t2) | location == (getLocation h1) = False
 
 checkWhere :: Piece -> Board -> Player
 checkWhere p (player , white , black)   | elem p white = White
-                                        | elem p Black = Black
+                                        | elem p black = Black
 
 getIndex :: Char -> Int
 getIndex 'a'=0
@@ -272,7 +272,7 @@ pawnLegalHelper (P (c1,r1)) (player , white ,black) (c2,r2) | ((checkWhere (P (c
                                                             | ((checkWhere (P (c1,r1)) (player , white ,black))==White) && (r2 ==  r1+1) && (((getIndex c2)==((getIndex c1)-1))||((getIndex c2)==((getIndex c1)+1))) && not (isEmpty (c2,r2) (player , white ,black)) = checkValid white (c2,r2)
                                                             | otherwise = False
 ----------
--- retuen list of illegal valid move for given piece
+-- retuen list of legal valid move for given piece
 suggestMove :: Piece -> Board -> [Location]
 suggestMove piece board = suggestMoveHelper piece board allLocations
 
@@ -284,3 +284,39 @@ suggestMoveHelper piece board (h:t)  | isLegal piece board h = h:(suggestMoveHel
 ----------
 -- return the board after moving the given piece 
 move :: Piece -> Location -> Board -> Board 
+move piece location (player,white,black)| not (isLegal piece (player,white,black) location) = error ("illegal move for piece "++(show piece))
+                                        | not (checkTurn piece (player,white,black)) = error ("It's "++(show player)++" player's turn, "++(show (flipColor player))++" can't move")
+                                        | player == White = (Black,updateList white piece location,cheackEat black location)
+                                        | player == Black = (White,cheackEat white location,updateList black piece location)
+
+updateList :: [Piece] -> Piece -> Location -> [Piece]
+updateList list piece location = (updatePiece piece location):(filter (/= piece) list)
+
+cheackEat :: [Piece] -> Location -> [Piece]
+cheackEat list location = filter (\x -> (getLocation x) /= location) list
+
+checkTurn :: Piece -> Board -> Bool
+checkTurn piece (player,white,black)    | player==White && elem piece black = False
+                                        | player==Black && elem piece white = False
+                                        | otherwise = True
+
+updatePiece :: Piece -> Location -> Piece
+updatePiece (P l) location = P location
+updatePiece (N l) location = N location
+updatePiece (K l) location = K location
+updatePiece (Q l) location = Q location
+updatePiece (R l) location = R location
+updatePiece (B l) location = B location
+
+flipColor :: Player -> Player
+flipColor White = Black
+flipColor Black = White
+----------
+-- for easier testing
+similarB :: Board -> Board -> Bool 
+similarB (p1,w1,b1) (p2,w2,b2) = (p1 == p2) && (allE w1 w2) && (allE w2 w1) && (allE b1 b2) && (allE b2 b1)
+
+allE :: [Piece] -> [Piece] -> Bool 
+allE [] _ = True
+allE (h:t) l = (elem h l) && allE t l
+----------

@@ -29,7 +29,6 @@ visualizeBoard (player,white,black) =
 
 
 
-["|  |","|  |","|  |","|  |","|  |","|  |","|  |","|  |"]       = "| "++getType(p)++getColor(P)++" |"
 
 -- toString :: Char -> [Piece] -> String
 -- toString 'i' list = ""
@@ -223,3 +222,11 @@ checkInLocation location ((R loc):t) | location == loc = True
 checkInLocation location ((B loc):t) | location == loc = True
                                         | otherwise = checkInLocation location t    
 ----------
+move (N ('b',3)) ('d',4) (White, [R ('h',1),N ('g',1),B ('f',1),
+K ('e',1), Q ('d',1),B ('c',1),N ('b',3),R ('a',1),
+P ('h',2),P ('g',2),P ('f',2),P ('e',2),
+P ('d',2),P ('c',2),P ('b',2),P ('a',2)] ,
+[R ('h',8),N ('g',8),B ('f',8),K ('e',8),
+Q ('d',8),B ('c',8),N ('b',8),R ('a',8),
+P ('h',7),P ('g',7),P ('f',7),P ('e',7),
+P ('d',7),P ('c',7),P ('b',7),P ('a',7)])
