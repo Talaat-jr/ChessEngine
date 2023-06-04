@@ -181,6 +181,7 @@ rookLegalHelper (R (c1,r1)) (player , white ,black) (c2,r2)     | c1/= c2 && r1/
                                                                 | c1==c2 && r1 > r2 && (checkWhere (R (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationRow_Down (R (c1,r1)) (player , white ,black) (c2,r2)
                                                                 | c1==c2 && r1 < r2 && (checkWhere (R (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationRow_Up (R (c1,r1)) (player , white ,black) (c2,r2)
                                                                 | c1==c2 && r1 < r2 && (checkWhere (R (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationRow_Up (R (c1,r1)) (player , white ,black) (c2,r2)
+                                                                | otherwise = False
                                                                                                                          
 rookLocationRow_Up :: Piece -> Board -> Location -> Bool
 rookLocationRow_Up (R (c1,r1)) board (c2,r2)| r2==r1 = True
