@@ -161,7 +161,7 @@ checkDiagonalLeftUp i (c1 , r1) (c2,r2) board     | (getIndex (c1) -i) < 0 || (r
                                                   | otherwise = False
 
 isLegal :: Piece -> Board -> Location -> Bool
---  getIndex c2 >7 || getIndex c2 < 0 || r1 > 8 || r1 < 1
+
 isLegal (R currLoc) board newLoc = rookLegalHelper  (R currLoc) board newLoc
 isLegal (B currLoc) board newLoc = bishopLegalHelper (B currLoc) board newLoc
 isLegal (Q currLoc) board newLoc = queenLegalHelper (Q currLoc) board newLoc
@@ -172,7 +172,7 @@ isLegal (P currLoc) board newLoc = pawnLegalHelper (P currLoc) board newLoc
 
 
 rookLegalHelper :: Piece -> Board -> Location -> Bool
-rookLegalHelper (R (c1,r1)) (player , white ,black) (c2,r2)     | getIndex c2 >7 || getIndex c2 < 0 || r1 > 8 || r1 < 1 = False  
+rookLegalHelper (R (c1,r1)) (player , white ,black) (c2,r2)     | c2 > 'h' ||  c2 < 'a' || r2 > 8 || r2 < 1 = False  
                                                                 | c1/= c2 && r1/=r2 = False
                                                                 | r1==r2 && c1 > c2 && (checkWhere (R (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationColumn_Left (R (c1,r1)) (player , white ,black) (c2,r2)
                                                                 | r1==r2 && c1 > c2 && (checkWhere (R (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationColumn_Left (R (c1,r1)) (player , white ,black) (c2,r2)
@@ -209,13 +209,13 @@ rookLocationColumn_Right  (R (c1,r1)) board (c2,r2) | c1 == c2 = True
                                                     | otherwise = False
 
 bishopLegalHelper :: Piece -> Board -> Location  -> Bool
-bishopLegalHelper (B (c1,r1)) (player , white ,black) (c2,r2)   | getIndex c2 >7 || getIndex c2 < 0 || r1 > 8 || r1 < 1 = False  
+bishopLegalHelper (B (c1,r1)) (player , white ,black) (c2,r2)   | c2 > 'h' ||  c2 < 'a' || r2 > 8 || r2 < 1 = False  
                                                                 | (checkWhere (B (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
                                                                 | (checkWhere (B (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
 
 
 queenLegalHelper :: Piece -> Board -> Location  -> Bool
-queenLegalHelper  (Q (c1,r1)) (player , white ,black) (c2,r2)   | getIndex c2 >7 || getIndex c2 < 0 || r1 > 8 || r1 < 1 = False  
+queenLegalHelper  (Q (c1,r1)) (player , white ,black) (c2,r2)   | c2 > 'h' ||  c2 < 'a' || r2 > 8 || r2 < 1 = False  
                                                                 | r1==r2 && c1 > c2 && (checkWhere (Q (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationColumn_Left (R (c1,r1)) (player , white ,black) (c2,r2)
                                                                 | r1==r2 && c1 > c2 && (checkWhere (Q (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) && rookLocationColumn_Left (R (c1,r1)) (player , white ,black) (c2,r2)
                                                                 | r1==r2 && c1 < c2 && (checkWhere (Q (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2) && rookLocationColumn_Right (R (c1,r1)) (player , white ,black) (c2,r2)
@@ -228,7 +228,7 @@ queenLegalHelper  (Q (c1,r1)) (player , white ,black) (c2,r2)   | getIndex c2 >7
                                                                 | (checkWhere (Q (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)  && checkDiagonal (c1,r1) (c2,r2) (player , white ,black)
 
 kingLegalHelper :: Piece -> Board -> Location  -> Bool
-kingLegalHelper (K (c1,r1)) (player , white ,black) (c2,r2) | getIndex c2 >7 || getIndex c2 < 0 || r1 > 8 || r1 < 1 = False  
+kingLegalHelper (K (c1,r1)) (player , white ,black) (c2,r2) | c2 > 'h' ||  c2 < 'a' || r2 > 8 || r2 < 1 = False  
                                                             | r1==r2 && ((getIndex c1) -1) ==(getIndex c2) && (checkWhere (K (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
                                                             | r1==r2 && ((getIndex c1) -1) ==(getIndex c2) && (checkWhere (K (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2) 
                                                             | r1==r2 && ((getIndex c1) +1) ==(getIndex c2) && (checkWhere (K (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
@@ -248,7 +248,7 @@ kingLegalHelper (K (c1,r1)) (player , white ,black) (c2,r2) | getIndex c2 >7 || 
                                                             | otherwise = False
 
 knightLegalHelper :: Piece -> Board -> Location  -> Bool
-knightLegalHelper (N (c1,r1)) (player , white ,black) (c2,r2)   | getIndex c2 >7 || getIndex c2 < 0 || r1 > 8 || r1 < 1 = False  
+knightLegalHelper (N (c1,r1)) (player , white ,black) (c2,r2)   | c2 > 'h' ||  c2 < 'a' || r2 > 8 || r2 < 1 = False  
                                                                 | (getIndex c1)+1 == (getIndex c2) && r1+2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
                                                                 | (getIndex c1)+1 == (getIndex c2) && r1+2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==White = checkValid white (c2,r2)
                                                                 | (getIndex c1)-1 == (getIndex c2) && r1+2==r2 && (checkWhere (N (c1,r1)) (player , white ,black))==Black = checkValid black (c2,r2)
@@ -268,7 +268,7 @@ knightLegalHelper (N (c1,r1)) (player , white ,black) (c2,r2)   | getIndex c2 >7
                                                                 | otherwise = False
 
 pawnLegalHelper :: Piece -> Board -> Location -> Bool
-pawnLegalHelper (P (c1,r1)) (player , white ,black) (c2,r2) | getIndex c2 >7 || getIndex c2 < 0 || r1 > 8 || r1 < 1 = False  
+pawnLegalHelper (P (c1,r1)) (player , white ,black) (c2,r2) | c2 > 'h' ||  c2 < 'a' || r2 > 8 || r2 < 1 = False  
                                                             | ((checkWhere (P (c1,r1)) (player , white ,black))==White) && r1==8 = False
                                                             | ((checkWhere (P (c1,r1)) (player , white ,black))==Black) && r1==1 = False
                                                             | ((checkWhere (P (c1,r1)) (player , white ,black))==Black) && (getIndex c1)==(getIndex c2) && r1 == 7 && (r2== r1-1 || r2==r1-2) = (checkValid black (c2,r2)) && (((r2 ==r1-1) && isEmpty (c2,r2) (player , white ,black)) || (r2==r1-2 && isEmpty (c2,r1-1) (player , white ,black) && isEmpty (c2,r2) (player , white ,black)))
